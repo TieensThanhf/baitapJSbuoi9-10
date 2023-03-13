@@ -7,8 +7,7 @@
 	<title>Quản lý nhân viên</title>
 
 	<!-- Font Awesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<!-- Bootstrap 4 -->
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 
@@ -124,7 +123,8 @@
 						<div class="row mb-3">
 							<div class="col">
 								<div class="input-group">
-									<input type="text" class="form-control" placeholder="Loại nhân viên" id="searchName">
+									<input type="text" class="form-control" placeholder="Loại nhân viên"
+										id="searchName">
 									<div class="input-group-prepend">
 										<span class="input-group-text" id="btnTimNV"><i class="fa fa-search"></i></span>
 									</div>
@@ -142,14 +142,14 @@
 									<th>Họ và tên</th>
 									<th>Email</th>
 									<th>Ngày làm</th>
-									<th>Chức vụ</th>									
+									<th>Chức vụ</th>
 									<th>Tổng lương</th>
 									<th>Xếp loại</th>
 									<th><em class="fa fa-cog"></em></th>
 								</tr>
 							</thead>
 							<tbody id="tableDanhSach">
-								
+
 							</tbody>
 						</table>
 					</div>
@@ -246,7 +246,7 @@
 
 							<span class="sp-thongbao" id="tbNgay"></span>
 						</div>
-						
+
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-prepend">
@@ -275,7 +275,8 @@
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-prepend">
-									<span class="input-group-text"><i class="fa fa-clock-o" aria-hidden="true"></i></span>
+									<span class="input-group-text"><i class="fa fa-clock-o"
+											aria-hidden="true"></i></span>
 								</div>
 								<input type="text" name="gioLam" id="gioLam" class="form-control input-sm"
 									placeholder="Giờ làm">
@@ -324,12 +325,13 @@
 			});
 		});
 
-		$('#btnThemNV').on('click', function(){
-			var errors = validInputs();
-			if(errors > 0){
-				return false;
-			}
-			// console.log($('#tknv').val());
+		$('body').on('click','.buttonDelete', function(){
+			console.log(1)
+			$(this).closest('tr').html('') 
+		});
+
+		var i=0;
+		$('#btnThemNV').on('click', function () {
 			let tknv = $('#tknv').val();
 			let name = $('#name').val();
 			let email = $('#email').val();
@@ -338,36 +340,75 @@
 			let gioLam = $('#gioLam').val();
 			let chucvu = $('#chucvu').val();
 			let tongLuong = calculateSalary(luongCB, chucvu);
-			console.log(tongLuong);
+			let xeploai = xepLoai(gioLam);
+			let email1 = isEmail(email);
+			let name1 = isName(name);
+			// console.log(email1);
+			// console.log(tongLuong);
+			// console.log(xeploai)
+			var errors = validInputs();
+			// console.log(errors)
+			if (errors > 0) {
+				console.log(1)
+				return false;
+
+			}
+			if (!email1  ){
+				console.log(2)
+				return false ;
+			}
+			if (!name1  ){
+				console.log(3)
+				return false ;
+			}
 			
-// console.log(datepicker)
+		
+			// console.log($('#tknv').val());
+			
+
+			// console.log(datepicker)
 			$('#tableDanhSach').append(
-			`<tr>
-				<td>`+tknv+`</td>
-				<th>`+name+`</th>
-				<th>`+email+`</th>
-				<th>`+datepicker+`</th>
-				<th>`+chucvu+`</th>									
-				<th>`+tongLuong+`</th>
-				<th>`+tknv+`</th>
-				<th><em class="fa fa-cog"></em></th>
+				`<tr class="info-worker">
+				<td class="tknv-`+i+`">`+ tknv + `</td>
+				<td>`+ name + `</td>
+				<td>`+ email + `</td>
+				<td>`+ datepicker + `</td>
+				<td>`+ chucvu + `</td>									
+				<td>`+ tongLuong + `</td>
+				<td>`+ xeploai + `</td>
+				
+				<td><i  class="fa-solid fa-trash-can buttonDelete "  ></i>
+					<i class="fa-regular fa-pen-to-square buttonUpdate " data-toggle="modal"
+									data-target="#myModal" data-id="`+i+`"></i> </td>
 			</tr>`
 			);
+			i++;
 		});
 
-		function calculateSalary(luongCB, chucvu){
+		$('body').on('click','#btnCapNhat', function(){
+			var id = $(this).data('id');
+			var data_tknv = $('#tknv').val();
+			$('.tknv-'+id).html(data_tknv);
+			
+		});
+
+		$('body').on('click','.buttonUpdate', function(){
+			$('#btnCapNhat').attr('data-id', $(this).data('id'));
+		});
+
+		function calculateSalary(luongCB, chucvu) {
 			var tongluong
-			if(chucvu == "Sếp"){
-				tongluong = luongCB * 3 ;
+			if (chucvu == "Sếp") {
+				tongluong = luongCB * 3;
 			}
-			if(chucvu == "Trưởng phòng"){
-				tongluong = luongCB * 2 ;
+			if (chucvu == "Trưởng phòng") {
+				tongluong = luongCB * 2;
 			}
-			if(chucvu == "Nhân viên"){
-				tongluong = luongCB * 1 ;
+			if (chucvu == "Nhân viên") {
+				tongluong = luongCB * 1;
 			}
-			
-			
+
+
 
 			return tongluong;
 		}
@@ -376,16 +417,107 @@
 		function validInputs() {
 			var error = 0;
 			let tknv = $('#tknv').val();
-			if(tknv == ''){
+			let name = $('#name').val();
+			let email = $('#email').val();
+			let datepicker = $('#datepicker').val();
+			let luongCB = $('#luongCB').val();
+			let gioLam = $('#gioLam').val();
+			let pass = $('#pass').val();
+			let chucvu = $('#chucvu').val();
+
+			// console.log(chucvu);
+			if (tknv == '') {
 				alert("k để trống ô tài khoản");
-				error ++;
+				error++;
+				return error;
 			}
-			if(tknv.length <  4 && tknv.length < 6){
+			if (pass == '') {
+				alert("k để trống ô mật khẩu");
+				error++;
+				return error;
+			}
+			if (luongCB == '') {
+				alert("k để trống ô lương CB");
+				error++;
+				return error;
+			}
+			if (name == '') {
+				alert("k để trống ô họ tên");
+				error++;
+				return error;
+			}
+			if (datepicker == '') {
+				alert("k để trống ô ngày làm");
+				error++;
+				return error;
+			}
+			if (email == '') {
+				alert("k để trống ô email");
+				error++;
+				return error;
+			}
+			if (gioLam == '') {
+				alert("k để trống ô giờ làm");
+				error++;
+				return error;
+			}
+
+			if (chucvu == "Chọn chức vụ") {
+				alert("k để trống ô chức vụ");
+
+				error++;
+				return error;
+			}
+			if (tknv.length < 4 || tknv.length > 6) {
+				console.log(12);
 				alert("Tài khoản chỉ được từ 4 đến 6 ký tự");
-				error ++;
+				error++;
 			}
-			return error;
+			if (luongCB < 1000000 || luongCB > 2000000) {
+				alert("LươngCB từ 1 triệu đến 2 triệu ");
+				error++;
+			}
+			if (gioLam < 80 || gioLam > 200) {
+				alert("Giờ Làm  từ 80 giờ đến 200 giờ ");
+				error++;
+			}
+
 		}
+
+
+		function isEmail(email) {
+			var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+			return regex.test(email);
+		}
+
+		function isName(name) {
+			var regex = /^[a-z A-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹý\\s]+$/;
+
+			return regex.test(name);
+		}
+
+		function isPass(pass) {
+			var regex = /^[A-Za-z][A-Za-z]*$/;
+;
+			return regex.test(pass);
+		}
+
+
+		function xepLoai(giolam) {
+
+			if (giolam >= 192) {
+				return "Nhân viên xuất sắc";
+			} else if (giolam >= 176) {
+				return "Nhân viên giỏi";
+			} else if (giolam >= 160) {
+				return "Nhân viên khá";
+			} else {
+				return "Nhân viên trung bình";
+			}
+			// console.log(giolam);
+		}
+
+
 	</script>
 </body>
 
